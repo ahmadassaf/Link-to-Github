@@ -1,16 +1,8 @@
 import assert from 'assert';
-import {
-  IMPORT,
-  EXPORT,
-  REQUIRE,
-  REQUIRE_RESOLVE,
-  GEM,
-  HOMEBREW,
-} from './index.js';
+import * as REGEX from './index.js';
 
 const fixtures = {
   IMPORT: {
-    regex: IMPORT,
     valid: [
       'import foo from "foo"',
       'import _ from "foo"',
@@ -40,7 +32,6 @@ const fixtures = {
     ],
   },
   EXPORT: {
-    regex: EXPORT,
     valid: [
       'export * from "foo"',
       'export { foo, bar } from "foo"',
@@ -55,7 +46,6 @@ const fixtures = {
     ],
   },
   REQUIRE: {
-    regex: REQUIRE,
     valid: [
       'require("foo")',
       'var foo = require("foo")',
@@ -72,6 +62,11 @@ const fixtures = {
       ['foo = require("./foo")bar = require("./bar")', ['"./foo"', '"./bar"']],
       ['const foo = require("./foo")bar = require("./bar")', ['"./foo"', '"./bar"']],
       'require "foo"',
+      // require.resolve
+      'require.resolve "foo"',
+      'require.resolve("foo")',
+      'var foo = require.resolve("foo")',
+      ['var foo = require.resolve("foo")var bar = require.resolve("bar")', ['"foo"', '"bar"']],
     ],
     invalid: [
       'require(foo)',
@@ -80,27 +75,17 @@ const fixtures = {
       'require (foo)',
       'require( "foo" )',
       'require("fo o")',
-    ],
-  },
-  REQUIRE_RESOLVE: {
-    regex: REQUIRE_RESOLVE,
-    valid: [
-      'require.resolve "foo"',
-      'require.resolve("foo")',
-      'var foo = require.resolve("foo")',
-      ['var foo = require.resolve("foo")var bar = require.resolve("bar")', ['"foo"', '"bar"']],
-    ],
-    invalid: [
+      // require.resolve
       'require.resolve(foo)',
       'require.resolve"foo"',
       'require.resolve ("foo")',
       'require.resolve (foo)',
       'require.resolve( "foo" )',
       'require.resolve("fo o")',
+      'requireDresolve("foo")',
     ],
   },
   GEM: {
-    regex: GEM,
     valid: [
       'gem "foo"',
       ['gem \'foo\'', ['\'foo\'']],
@@ -110,12 +95,19 @@ const fixtures = {
     ],
   },
   HOMEBREW: {
-    regex: HOMEBREW,
     valid: [
       'depends_on "foo"',
       ['depends_on \'foo\'', ['\'foo\'']],
       'conflicts_with "foo"',
       ['conflicts_with \'foo\'', ['\'foo\'']],
+      'depends_on cask: "foo"',
+      ['depends_on cask: \'foo\'', ['\'foo\'']],
+      'conflicts_with cask: "foo"',
+      ['conflicts_with cask: \'foo\'', ['\'foo\'']],
+      'depends_on formula: "foo"',
+      ['depends_on formula: \'foo\'', ['\'foo\'']],
+      'conflicts_with formula: "foo"',
+      ['conflicts_with formula: \'foo\'', ['\'foo\'']],
     ],
     // These probably aren't actually invalid, but
     // https://github.com/Homebrew/homebrew-core/ has no occurences of multiple
@@ -126,11 +118,70 @@ const fixtures = {
       'conflicts_with     "foo"',
     ],
   },
+  TYPESCRIPT_REFERENCE: {
+    valid: [
+      '/// <reference path="foo" />',
+      '///<reference path="foo" />',
+    ],
+    invalid: [
+      '// <reference path="foo" />',
+    ],
+  },
+  DOCKER_FROM: {
+    valid: [
+      ['FROM foo', ['foo']],
+      ['FROM foo:1.2.3', ['foo:1.2.3']],
+      ['FROM foo:1.2.3-alpha', ['foo:1.2.3-alpha']],
+      ['FROM foo/bar', ['foo/bar']],
+    ],
+    invalid: [
+      'FROMfoo',
+      // 'FROM\nfoo',
+    ],
+  },
+  VIM_PLUGIN: {
+    valid: [
+      ["Plugin 'VundleVim/Vundle.vim'", ["'VundleVim/Vundle.vim'"]],
+      ['Plugin "VundleVim/Vundle.vim"', ['"VundleVim/Vundle.vim"']],
+      ["Plugin 'ctrlp.vim'", ["'ctrlp.vim'"]],
+      ['Plugin "ctrlp.vim"', ['"ctrlp.vim"']],
+    ],
+    invalid: [
+      "Plugin'ctrlp.vim'",
+    ],
+  },
+  RUST_CRATE: {
+    valid: [
+      ['extern crate pcre;', ['pcre']],
+      ['extern crate std as ruststd;', ['std']],
+      ['use std::option::Option::{Some, None};', ['std']],
+    ],
+    invalid: [
+      "extern create 'pcre'",
+    ],
+  },
+  PYTHON_IMPORT: {
+    valid: [
+      ['import foo', ['foo']],
+      ['\nimport foo', ['foo']],
+      ['import fo_o', ['fo_o']],
+      ['import .foo', ['.foo']],
+      ['import foo as bar', ['foo']],
+      ['from foo import bar', ['foo']],
+      ['from foo import bar, baz', ['foo']],
+      ['from foo.bar import baz', ['foo.bar']],
+    ],
+    invalid: [
+      '\simport foo',
+      '\simport\nfoo',
+    ],
+  },
 };
 
 describe('helper-grammar-regex-collection', () => {
   Object.keys(fixtures).forEach((grammar) => {
-    const { regex, valid, invalid } = fixtures[grammar];
+    const { valid, invalid } = fixtures[grammar];
+    const regex = REGEX[grammar];
 
     beforeEach(() => {
       regex.lastIndex = 0;

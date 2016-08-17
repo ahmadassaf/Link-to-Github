@@ -8,18 +8,31 @@
     "jquery": "^2.1.1"
 =======
   "name": "OctoLinker",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "engines": {
     "node": ">=4.0.0"
   },
   "main": "lib/app.js",
   "scripts": {
-    "bootstrap": "./scripts/bootstrap",
-    "lint": "./scripts/lint",
-    "test": "./scripts/test",
-    "watch-test": "./scripts/test --no-single-run --auto-watch",
-    "build": "./scripts/build",
-    "watch-build": "./scripts/watch-build"
+    "postinstall": "ln -sf ./scripts/hooks/pre-commit .git/hooks/pre-commit",
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "karma start",
+    "test:watch": "karma start --no-single-run --auto-watch",
+    "version": "json -I -f assets/manifest.json -e \"this.version='`json -f package.json version`'\" && git add assets/manifest.json",
+    "package-all": "npm-run-all chrome-pack firefox-pack && cp out/chrome-octolinker-$npm_package_version.zip out/opera-octolinker-$npm_package_version.zip",
+    "release": "webstore upload --source out/chrome-octolinker-$npm_package_version.zip --auto-publish",
+    "chrome-manifest": "mkdir -p dist && json -e 'delete this.applications; this.permissions.shift()' < assets/manifest.json > dist/manifest.json",
+    "chrome-build": "npm run chrome-manifest && webpack",
+    "chrome-dist": "npm run chrome-build -- -p",
+    "chrome-watch": "npm run chrome-manifest && webpack --watch",
+    "chrome-pack": "npm run chrome-dist && mkdir -p out && zip -rj out/chrome-octolinker-$npm_package_version.zip dist",
+    "firefox-manifest": "mkdir -p dist && cp assets/manifest.json dist/manifest.json",
+    "firefox-build": "npm run firefox-manifest && webpack",
+    "firefox-dist": "npm run firefox-build -- -p",
+    "firefox-watch": "npm run firefox-manifest && webpack --watch",
+    "firefox-pack": "npm run firefox-dist && mkdir -p out && zip -rj out/firefox-octolinker-$npm_package_version.zip dist/",
+    "firefox-open": "npm run firefox-build && web-ext run --source-dir dist"
   },
   "dependencies": {
     "JSONPath": "^0.11.2",
@@ -30,29 +43,38 @@
     "github-injection": "^0.2.0",
     "github-url-from-git": "^1.4.0",
     "github-url-from-username-repo": "^1.0.2",
+    "giturl": "^1.0.0",
     "jquery": "^2.1.4",
     "semver": "^5.1.0",
     "semver-regex": "^1.0.0"
 >>>>>>> 5bbe5d829cb95b9fe127e0e81d19acf1827ffc6f
   },
   "devDependencies": {
+    "babel-core": "^6.9.1",
     "babel-eslint": "^4.1.3",
-    "babel-preset-es2015": "^6.1.18",
-    "babelify": "^7.2.0",
-    "browserify": "^12.0.1",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "chrome-webstore-upload-cli": "^1.0.3",
+    "copy-webpack-plugin": "^3.0.1",
     "eslint": "^1.10.3",
     "eslint-config-airbnb": "2.1.1",
-    "karma-browserify": "^4.4.0",
+    "json": "^9.0.4",
+    "json-loader": "^0.5.4",
+    "karma": "^1.1.1",
     "karma-fixture": "^0.2.5",
-    "karma-html2js-preprocessor": "^0.1.0",
-    "karma-mocha": "^0.2.0",
-    "karma-mocha-reporter": "^1.1.1",
-    "karma-phantomjs-launcher": "^0.2.1",
+    "karma-html2js-preprocessor": "^1.0.0",
+    "karma-mocha": "^1.1.1",
+    "karma-mocha-reporter": "^2.0.4",
+    "karma-phantomjs-launcher": "^1.0.1",
     "karma-phantomjs-shim": "^1.1.2",
+    "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^1.7.0",
     "mocha": "^2.3.4",
-    "phantomjs": "^1.9.18",
-    "sinon": "^1.17.2",
-    "watchify": "^3.6.1"
+    "npm-run-all": "^2.3.0",
+    "sinon": "^2.0.0-pre",
+    "web-ext": "^1.0.1",
+    "webpack": "^1.13.1",
+    "yargs": "^4.7.1"
   },
   "private": true
 }

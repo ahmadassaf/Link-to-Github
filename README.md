@@ -10,7 +10,7 @@
 # What is OctoLinker? [![Build Status](https://travis-ci.org/OctoLinker/browser-extension.svg?branch=master)](https://travis-ci.org/OctoLinker/browser-extension)
 >>>>>>> 5bbe5d829cb95b9fe127e0e81d19acf1827ffc6f
 
-First of all, it's a browser extension. It's currently only available on Chrome. Once installed, it allows you to navigate through projects on GitHub.com efficiently.
+First of all, it's a browser extension. Once installed, it allows you to navigate through projects on GitHub.com efficiently.
 
 <<<<<<< HEAD
 This Google Chrome extension allows you to navigate across files and packages on GitHub.com with ease. It works really well for JavaScript e.g. `package.json` `bower.json` `ES2015 import` and good old `CommonJS` statements. Also PHP `composer.json` is supported. Many [other languages](https://github.com/octo-linker/chrome-extension/labels/Add%20support) will be added soon.
@@ -23,14 +23,19 @@ Most projects consist of many files and third party dependencies. Files are refe
 # Install
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 For the latest updates follow [@octo_linker](https://twitter.com/octo_linker) on twitter.
 =======
 Install it from the [Chrome Web Store](https://chrome.google.com/webstore/detail/octo-linker/jlmafbaeoofdegohdhinkhilhclaklkp).
 >>>>>>> 5bbe5d829cb95b9fe127e0e81d19acf1827ffc6f
+=======
+Install OctoLinker from [Chrome Web Store](https://chrome.google.com/webstore/detail/octo-linker/jlmafbaeoofdegohdhinkhilhclaklkp), [Mozilla Add-ons Store](https://addons.mozilla.org/en-US/firefox/addon/octolinker/) or [Opera Add-ons Store](https://addons.opera.com/en/extensions/details/octolinker/).
+
+>>>>>>> e08ae44f8f7e428a9615533b721ee3595b367990
 
 # Want to contribute?
 
-Anyone can help make this project better - check out the [Contributing](/CONTRIBUTING.md) and [Developer](/DEVELOPER.md) guide!
+Anyone can help make this project better - check out the [Contributing](/CONTRIBUTING.md) guide!
 
 # Feedback please
 
@@ -43,6 +48,7 @@ If you encounter a problem using OctoLinker, or would like to request an enhance
 Should you have any problems, please open up an [issue](https://github.com/octo-linker/chrome-extension/issues).
 =======
 - My girlfriend for being so patient with me!
+- [@josephfrazier_](https://twitter.com/josephfrazier_) for his awesome contributions to this project!
 - [art-noir.net](http://art-noir.net) for the awesome mascot and website!
 - [@kkamilio](https://twitter.com/kkamilio) and [@WolnyAdrian](https://twitter.com/WolnyAdrian) for teaching me how Ruby works!
 - [@TheeApeman](https://twitter.com/TheeApeman) for code review!
