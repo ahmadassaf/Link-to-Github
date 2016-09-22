@@ -56,9 +56,28 @@ describe('click-handler', () => {
     });
   });
 
+  describe('on mouseup', () => {
+    it('does not call the corresponding resolver when mouseup was not tirggerd by a middle mouse click', () => {
+      $link.trigger($.Event('mouseup', { // eslint-disable-line new-cap
+        which: 1,
+      }));
+      assert.equal(resolvers.foo.callCount, 0);
+      assert.equal(resolvers.bar.callCount, 0);
+    });
+
+    it('calls the corresponding handler on middle mouse click', () => {
+      $link.trigger($.Event('mouseup', { // eslint-disable-line new-cap
+        which: 2,
+      }));
+
+      assert.equal(resolvers.foo.callCount, 1);
+      assert.equal(resolvers.bar.callCount, 0);
+    });
+  });
+
   describe('request', () => {
     it('sends a runtime message with urls to load', () => {
-      resolvers.foo.returns('https://github.com/foo');
+      resolvers.foo.returns('{BASE_URL}/foo');
       $link.click();
 
       assert.equal(window.chrome.runtime.sendMessage.callCount, 1);
@@ -66,7 +85,7 @@ describe('click-handler', () => {
 
     describe('when resolver returns a url', () => {
       it('passes object along the runtime message', () => {
-        resolvers.foo.returns('https://github.com/foo');
+        resolvers.foo.returns('{BASE_URL}/foo');
         $link.click();
 
         assert.deepEqual(window.chrome.runtime.sendMessage.args[0][0].urls, [
@@ -78,8 +97,8 @@ describe('click-handler', () => {
     describe('when resolver returns an array of url', () => {
       it('passes object along the runtime message', () => {
         resolvers.foo.returns([
-          'https://github.com/foo',
-          'https://github.com/bar',
+          '{BASE_URL}/foo',
+          '{BASE_URL}/bar',
         ]);
         $link.click();
 
@@ -94,7 +113,7 @@ describe('click-handler', () => {
       it('passes url object along the runtime message', () => {
         resolvers.foo.returns({
           method: 'GET',
-          url: 'https://github.com/foo',
+          url: '{BASE_URL}/foo',
         });
         $link.click();
 
@@ -119,7 +138,7 @@ describe('click-handler', () => {
       it('calls the ping route only for the external urls', () => {
         resolvers.foo.returns([
           'https://hubhub.com/foo',
-          'https://github.com/bar',
+          '{BASE_URL}/bar',
         ]);
         $link.click();
 

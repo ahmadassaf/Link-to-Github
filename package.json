@@ -8,7 +8,7 @@
     "jquery": "^2.1.1"
 =======
   "name": "OctoLinker",
-  "version": "4.2.0",
+  "version": "4.4.0",
   "engines": {
     "node": ">=4.0.0"
   },
